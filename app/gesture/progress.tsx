@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedProps,
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated";
 import Svg, { Circle, G, Path } from "react-native-svg";
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 /* 极坐标转换为笛卡尔坐标 */
 const polarToCartesian = (
@@ -16,14 +24,6 @@ const polarToCartesian = (
     x: centerX + radius * Math.cos(angleInRadians),
     y: centerY + radius * Math.sin(angleInRadians),
   };
-};
-
-/* 笛卡尔坐标转换为极坐标 */
-const cartesianToPolar = (centerX: number, centerY: number, x: number, y: number) => {
-  const dx = x - centerX;
-  const dy = y - centerY;
-  const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
-  return angle < 0 ? angle + 360 : angle;
 };
 
 /* 圆路径 */
@@ -61,31 +61,81 @@ const CircularProgress = ({
   const { startAngle, endAngle } = genAngles(gapAngle);
 
   /* 轨道轨迹 */
-  const { d } = circlePath(radius, radius, radius - strokeWidth, startAngle, endAngle);
-
-  /* 进度末端角度 */
-  const progressEndAngle = startAngle + progress * (endAngle - startAngle);
-
-  /* 进度轨迹 */
-  const { d: progressD, endPos: progressEnd } = circlePath(
+  const { d, startPos, endPos } = circlePath(
     radius,
     radius,
     radius - strokeWidth,
     startAngle,
-    progressEndAngle
+    endAngle
   );
+
+  const circleX = useSharedValue(startPos.x);
+  const circleY = useSharedValue(startPos.y);
+
+  const currentAngle = useDerivedValue(() => {
+    // 计算两个点相对于圆心的角度
+    const angle1 = Math.atan2(startPos.y - radius, startPos.x - radius);
+    const angle2 = Math.atan2(circleY.value - radius, circleX.value - radius);
+
+    // 计算角度差（弧度）
+    let angle = angle2 - angle1;
+
+    // 将角度差转换为 0 到 2π 之间的正值
+    if (angle < 0) {
+      angle += 2 * Math.PI;
+    }
+
+    return angle;
+  });
+
+  const cicleProps = useAnimatedProps(() => {
+    return {
+      cx: circleX.value,
+      cy: circleY.value,
+    };
+  });
+
+  const progressPathProps = useAnimatedProps(() => {
+    const largeArcFlag = currentAngle.value > Math.PI ? 1 : 0;
+
+    return {
+      d: `M ${startPos.x} ${startPos.y} A ${radius - strokeWidth} ${
+        radius - strokeWidth
+      } 0 ${largeArcFlag} 1 ${circleX.value} ${circleY.value}`,
+    };
+  });
+
+  const panGesture = Gesture.Pan()
+    .minDistance(1)
+    .onUpdate((e) => {
+      const dx = e.x - radius;
+      const dy = e.y - radius;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      const scale = (radius - strokeWidth) / distance;
+
+      circleX.value = radius + dx * scale;
+      circleY.value = radius + dy * scale;
+    });
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <Svg width={radius * 2} height={radius * 2}>
-        <G>
-          <Path d={d} fill="none" stroke="gray" strokeWidth={strokeWidth} />
-          {progress > 0 && (
-            <Path d={progressD} fill="none" stroke="green" strokeWidth={strokeWidth} />
-          )}
-          <Circle cx={progressEnd.x} cy={progressEnd.y} r="10" fill="blue" />
-        </G>
-      </Svg>
+      <GestureDetector gesture={panGesture}>
+        <Svg width={radius * 2} height={radius * 2}>
+          <G>
+            <Path d={d} fill="none" stroke="gray" strokeWidth={strokeWidth} />
+            {progress > 0 && (
+              <AnimatedPath
+                animatedProps={progressPathProps}
+                fill="none"
+                stroke="green"
+                strokeWidth={strokeWidth}
+              />
+            )}
+            <AnimatedCircle animatedProps={cicleProps} r="10" fill="blue" />
+          </G>
+        </Svg>
+      </GestureDetector>
     </GestureHandlerRootView>
   );
 };
