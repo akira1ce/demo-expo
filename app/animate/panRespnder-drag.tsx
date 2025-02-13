@@ -1,21 +1,12 @@
 import React, { useRef } from "react";
-import { Animated, View, PanResponder, Text } from "react-native";
+import { Animated, View, PanResponder, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const App = () => {
   const pan = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
-      /* drag and no reset when release */
-      // onPanResponderGrant: () => {
-      //   pan.setOffset({
-      //     x: pan.x._value,
-      //     y: pan.y._value,
-      //   });
-      // },
-      // onPanResponderRelease: () => {
-      //   pan.flattenOffset();
-      // },
       onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
         useNativeDriver: false,
       }),
@@ -26,17 +17,38 @@ const App = () => {
   ).current;
 
   return (
-    <View className="flex flex-1 items-center justify-center">
-      <Text className="leading-6 text-sm font-bold">Drag & Release this box!</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <Text style={styles.text}>Drag & Release this box!</Text>
       <Animated.View
-        style={{
-          transform: [{ translateX: pan.x }, { translateY: pan.y }],
-        }}
+        style={[styles.animatedView, { transform: [{ translateX: pan.x }, { translateY: pan.y }] }]}
         {...panResponder.panHandlers}>
-        <View className="h-40 w-40 bg-blue-400 rounded" />
+        <View style={styles.box} />
       </Animated.View>
-    </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text: {
+    lineHeight: 24,
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  animatedView: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  box: {
+    height: 160,
+    width: 160,
+    backgroundColor: "blue",
+    borderRadius: 8,
+  },
+});
 
 export default App;

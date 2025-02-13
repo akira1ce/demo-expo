@@ -2,6 +2,7 @@ import React from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet, Dimensions } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function clamp(val: number, min: number, max: number) {
   return Math.min(Math.max(val, min), max);
@@ -48,11 +49,13 @@ export default function App() {
     .runOnJS(true);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <GestureDetector gesture={pan}>
-        <Animated.View style={[animatedStyles, styles.box]}></Animated.View>
-      </GestureDetector>
-    </GestureHandlerRootView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={styles.container}>
+        <GestureDetector gesture={pan}>
+          <Animated.View style={[animatedStyles, styles.box]}></Animated.View>
+        </GestureDetector>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
 

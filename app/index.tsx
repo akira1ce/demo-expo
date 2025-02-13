@@ -1,15 +1,29 @@
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import routes from "./configs/route.config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   return (
-    <View className="flex-col items-center gap-10 p-10">
+    <SafeAreaView style={[styles.contianer]}>
       {routes.map((route) => (
         <Link key={route.path} href={{ pathname: route.path as any }}>
-          <Text className="text-2xl font-bold">「{route.title}」</Text>
+          <Text style={[styles.link_text]}>「{route.title}」</Text>
         </Link>
       ))}
-    </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  contianer: {
+    flex: 1,
+    alignItems: "center",
+    gap: 10,
+    padding: 10,
+  },
+  link_text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});

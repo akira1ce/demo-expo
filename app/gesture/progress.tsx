@@ -107,7 +107,7 @@ const CircularProgress = ({
 
   const panGesture = Gesture.Pan()
     .minDistance(1)
-    .onUpdate((e) => {
+    .onStart((e) => {
       const dx = e.x - radius;
       const dy = e.y - radius;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -116,6 +116,25 @@ const CircularProgress = ({
 
       circleX.value = radius + dx * scale;
       circleY.value = radius + dy * scale;
+    })
+    .onUpdate((e) => {
+      if (currentAngle.value > (1 - gapAngle / 360) * 2 * Math.PI) {
+        return;
+      }
+      const dx = e.x - radius;
+      const dy = e.y - radius;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      const scale = (radius - strokeWidth) / distance;
+
+      circleX.value = radius + dx * scale;
+      circleY.value = radius + dy * scale;
+    })
+    .onEnd(() => {
+      if (currentAngle.value > (1 - gapAngle / 360) * 2 * Math.PI) {
+        circleX.value = endPos.x;
+        circleY.value = endPos.y;
+      }
     });
 
   return (

@@ -1,13 +1,3 @@
-/* 
-<Stack.Screen name="animate/carousel" />
-<Stack.Screen name="animate/panRespnder-drag" />
-<Stack.Screen name="gesture/draggable" />
-<Stack.Screen name="gesture/progress" />
-<Stack.Screen name="gesture/swiper" />
-<Stack.Screen name="+not-found" />
-
-*/
-
 const routes = [
   {
     path: "/animate/carousel",
@@ -16,6 +6,10 @@ const routes = [
   {
     path: "/animate/panRespnder-drag",
     title: "animate-panRespnder-drag",
+  },
+  {
+    path: "/animate/enter-animated",
+    title: "animate-enter-animated",
   },
   {
     path: "/gesture/swiper",
