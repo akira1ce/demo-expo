@@ -7,6 +7,7 @@ import { useCallback } from "react";
 import { useTheme } from "@react-navigation/native";
 
 export default function Home() {
+  /* 获取主题数据 value */
   const { colors } = useTheme();
 
   const renderLink = useCallback<ListRenderItem<Route>>(
@@ -19,14 +20,18 @@ export default function Home() {
   );
 
   return (
+    /* 安全区域 */
     <SafeAreaView style={[styles.contianer]}>
+      {/* 手势根区域 */}
       <GestureHandlerRootView>
+        {/* 虚拟滚动 */}
         <FlatList data={routes} renderItem={renderLink} keyExtractor={(route) => route.path} />
       </GestureHandlerRootView>
     </SafeAreaView>
   );
 }
 
+/* style */
 const styles = StyleSheet.create({
   contianer: {
     flex: 1,

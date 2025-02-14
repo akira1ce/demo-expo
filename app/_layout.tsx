@@ -6,9 +6,10 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+/* 启动页 */
 SplashScreen.preventAutoHideAsync();
 
+/* 根路由 */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -28,7 +29,9 @@ export default function RootLayout() {
   const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
 
   return (
+    /* 主题 Provider */
     <ThemeProvider value={theme}>
+      {/* 声明可跳转的路由栈 */}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="animate/carousel" />
         <Stack.Screen name="animate/panRespnder-drag" />
@@ -39,7 +42,7 @@ export default function RootLayout() {
         <Stack.Screen name="link/index" />
         <Stack.Screen name="+not-found" />
       </Stack>
-
+      {/* 状态栏 */}
       <StatusBar style="auto" animated />
     </ThemeProvider>
   );
