@@ -28,5 +28,9 @@ export const routes: Route[] = [
     path: "/gesture/draggable",
     title: "gesture/draggable",
   },
+  {
+    path: "/link",
+    title: "link",
+  },
   { path: "+not-found", title: "+not-found" },
 ];

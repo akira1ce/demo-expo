@@ -36,6 +36,7 @@ export default function RootLayout() {
         <Stack.Screen name="gesture/draggable" />
         <Stack.Screen name="gesture/progress" />
         <Stack.Screen name="gesture/swiper" />
+        <Stack.Screen name="link/index" />
         <Stack.Screen name="+not-found" />
       </Stack>
 
