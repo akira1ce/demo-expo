@@ -4,7 +4,6 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -26,8 +25,10 @@ export default function RootLayout() {
     return null;
   }
 
+  const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
+
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={theme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="animate/carousel" />
         <Stack.Screen name="animate/panRespnder-drag" />
@@ -37,7 +38,8 @@ export default function RootLayout() {
         <Stack.Screen name="gesture/swiper" />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+
+      <StatusBar style="auto" animated />
     </ThemeProvider>
   );
 }

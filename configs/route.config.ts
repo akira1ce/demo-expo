@@ -1,4 +1,9 @@
-const routes = [
+export interface Route {
+  path: string;
+  title: string;
+}
+
+export const routes: Route[] = [
   {
     path: "/animate/carousel",
     title: "animate-carousel",
@@ -23,7 +28,5 @@ const routes = [
     path: "/gesture/draggable",
     title: "gesture/draggable",
   },
-  { path: "+not-found", title: "+not-found", component: "+not-found" },
+  { path: "+not-found", title: "+not-found" },
 ];
-
-export default routes;
